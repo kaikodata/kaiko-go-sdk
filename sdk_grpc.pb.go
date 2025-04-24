@@ -15,6 +15,7 @@ import (
 	aggregates_ohlcv_v1 "github.com/kaikodata/kaiko-go-sdk/stream/aggregates_ohlcv_v1"
 	aggregates_spot_exchange_rate_v2 "github.com/kaikodata/kaiko-go-sdk/stream/aggregates_spot_exchange_rate_v2"
 	aggregates_vwap_v1 "github.com/kaikodata/kaiko-go-sdk/stream/aggregates_vwap_v1"
+	constant_duration_indices_v1 "github.com/kaikodata/kaiko-go-sdk/stream/constant_duration_indices_v1"
 	derivatives_instrument_metrics_v1 "github.com/kaikodata/kaiko-go-sdk/stream/derivatives_instrument_metrics_v1"
 	exotic_indices_v1 "github.com/kaikodata/kaiko-go-sdk/stream/exotic_indices_v1"
 	index_forex_rate_v1 "github.com/kaikodata/kaiko-go-sdk/stream/index_forex_rate_v1"
@@ -2069,6 +2070,126 @@ var StreamOrderbookL2ReplayServiceV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "Subscribe",
 			Handler:       _StreamOrderbookL2ReplayServiceV1_Subscribe_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "sdk/sdk.proto",
+}
+
+const (
+	StreamConstantDurationIndicesServiceV1_Subscribe_FullMethodName = "/kaikosdk.StreamConstantDurationIndicesServiceV1/Subscribe"
+)
+
+// StreamConstantDurationIndicesServiceV1Client is the client API for StreamConstantDurationIndicesServiceV1 service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type StreamConstantDurationIndicesServiceV1Client interface {
+	// Subscribe
+	Subscribe(ctx context.Context, in *constant_duration_indices_v1.StreamConstantDurationIndicesServiceRequestV1, opts ...grpc.CallOption) (StreamConstantDurationIndicesServiceV1_SubscribeClient, error)
+}
+
+type streamConstantDurationIndicesServiceV1Client struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewStreamConstantDurationIndicesServiceV1Client(cc grpc.ClientConnInterface) StreamConstantDurationIndicesServiceV1Client {
+	return &streamConstantDurationIndicesServiceV1Client{cc}
+}
+
+func (c *streamConstantDurationIndicesServiceV1Client) Subscribe(ctx context.Context, in *constant_duration_indices_v1.StreamConstantDurationIndicesServiceRequestV1, opts ...grpc.CallOption) (StreamConstantDurationIndicesServiceV1_SubscribeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &StreamConstantDurationIndicesServiceV1_ServiceDesc.Streams[0], StreamConstantDurationIndicesServiceV1_Subscribe_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &streamConstantDurationIndicesServiceV1SubscribeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type StreamConstantDurationIndicesServiceV1_SubscribeClient interface {
+	Recv() (*constant_duration_indices_v1.StreamConstantDurationIndicesServiceResponseV1, error)
+	grpc.ClientStream
+}
+
+type streamConstantDurationIndicesServiceV1SubscribeClient struct {
+	grpc.ClientStream
+}
+
+func (x *streamConstantDurationIndicesServiceV1SubscribeClient) Recv() (*constant_duration_indices_v1.StreamConstantDurationIndicesServiceResponseV1, error) {
+	m := new(constant_duration_indices_v1.StreamConstantDurationIndicesServiceResponseV1)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// StreamConstantDurationIndicesServiceV1Server is the server API for StreamConstantDurationIndicesServiceV1 service.
+// All implementations must embed UnimplementedStreamConstantDurationIndicesServiceV1Server
+// for forward compatibility
+type StreamConstantDurationIndicesServiceV1Server interface {
+	// Subscribe
+	Subscribe(*constant_duration_indices_v1.StreamConstantDurationIndicesServiceRequestV1, StreamConstantDurationIndicesServiceV1_SubscribeServer) error
+	mustEmbedUnimplementedStreamConstantDurationIndicesServiceV1Server()
+}
+
+// UnimplementedStreamConstantDurationIndicesServiceV1Server must be embedded to have forward compatible implementations.
+type UnimplementedStreamConstantDurationIndicesServiceV1Server struct {
+}
+
+func (UnimplementedStreamConstantDurationIndicesServiceV1Server) Subscribe(*constant_duration_indices_v1.StreamConstantDurationIndicesServiceRequestV1, StreamConstantDurationIndicesServiceV1_SubscribeServer) error {
+	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
+}
+func (UnimplementedStreamConstantDurationIndicesServiceV1Server) mustEmbedUnimplementedStreamConstantDurationIndicesServiceV1Server() {
+}
+
+// UnsafeStreamConstantDurationIndicesServiceV1Server may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StreamConstantDurationIndicesServiceV1Server will
+// result in compilation errors.
+type UnsafeStreamConstantDurationIndicesServiceV1Server interface {
+	mustEmbedUnimplementedStreamConstantDurationIndicesServiceV1Server()
+}
+
+func RegisterStreamConstantDurationIndicesServiceV1Server(s grpc.ServiceRegistrar, srv StreamConstantDurationIndicesServiceV1Server) {
+	s.RegisterService(&StreamConstantDurationIndicesServiceV1_ServiceDesc, srv)
+}
+
+func _StreamConstantDurationIndicesServiceV1_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(constant_duration_indices_v1.StreamConstantDurationIndicesServiceRequestV1)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StreamConstantDurationIndicesServiceV1Server).Subscribe(m, &streamConstantDurationIndicesServiceV1SubscribeServer{stream})
+}
+
+type StreamConstantDurationIndicesServiceV1_SubscribeServer interface {
+	Send(*constant_duration_indices_v1.StreamConstantDurationIndicesServiceResponseV1) error
+	grpc.ServerStream
+}
+
+type streamConstantDurationIndicesServiceV1SubscribeServer struct {
+	grpc.ServerStream
+}
+
+func (x *streamConstantDurationIndicesServiceV1SubscribeServer) Send(m *constant_duration_indices_v1.StreamConstantDurationIndicesServiceResponseV1) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// StreamConstantDurationIndicesServiceV1_ServiceDesc is the grpc.ServiceDesc for StreamConstantDurationIndicesServiceV1 service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var StreamConstantDurationIndicesServiceV1_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "kaikosdk.StreamConstantDurationIndicesServiceV1",
+	HandlerType: (*StreamConstantDurationIndicesServiceV1Server)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Subscribe",
+			Handler:       _StreamConstantDurationIndicesServiceV1_Subscribe_Handler,
 			ServerStreams: true,
 		},
 	},
