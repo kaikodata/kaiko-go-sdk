@@ -15,6 +15,7 @@ import (
 	aggregates_ohlcv_v1 "github.com/kaikodata/kaiko-go-sdk/stream/aggregates_ohlcv_v1"
 	aggregates_spot_exchange_rate_v2 "github.com/kaikodata/kaiko-go-sdk/stream/aggregates_spot_exchange_rate_v2"
 	aggregates_vwap_v1 "github.com/kaikodata/kaiko-go-sdk/stream/aggregates_vwap_v1"
+	composite_indices_v1 "github.com/kaikodata/kaiko-go-sdk/stream/composite_indices_v1"
 	constant_duration_indices_v1 "github.com/kaikodata/kaiko-go-sdk/stream/constant_duration_indices_v1"
 	derivatives_instrument_metrics_v1 "github.com/kaikodata/kaiko-go-sdk/stream/derivatives_instrument_metrics_v1"
 	exotic_indices_v1 "github.com/kaikodata/kaiko-go-sdk/stream/exotic_indices_v1"
@@ -2190,6 +2191,126 @@ var StreamConstantDurationIndicesServiceV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "Subscribe",
 			Handler:       _StreamConstantDurationIndicesServiceV1_Subscribe_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "sdk/sdk.proto",
+}
+
+const (
+	StreamCompositeIndicesServiceV1_Subscribe_FullMethodName = "/kaikosdk.StreamCompositeIndicesServiceV1/Subscribe"
+)
+
+// StreamCompositeIndicesServiceV1Client is the client API for StreamCompositeIndicesServiceV1 service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type StreamCompositeIndicesServiceV1Client interface {
+	// Subscribe
+	Subscribe(ctx context.Context, in *composite_indices_v1.StreamCompositeIndicesServiceRequestV1, opts ...grpc.CallOption) (StreamCompositeIndicesServiceV1_SubscribeClient, error)
+}
+
+type streamCompositeIndicesServiceV1Client struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewStreamCompositeIndicesServiceV1Client(cc grpc.ClientConnInterface) StreamCompositeIndicesServiceV1Client {
+	return &streamCompositeIndicesServiceV1Client{cc}
+}
+
+func (c *streamCompositeIndicesServiceV1Client) Subscribe(ctx context.Context, in *composite_indices_v1.StreamCompositeIndicesServiceRequestV1, opts ...grpc.CallOption) (StreamCompositeIndicesServiceV1_SubscribeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &StreamCompositeIndicesServiceV1_ServiceDesc.Streams[0], StreamCompositeIndicesServiceV1_Subscribe_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &streamCompositeIndicesServiceV1SubscribeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type StreamCompositeIndicesServiceV1_SubscribeClient interface {
+	Recv() (*composite_indices_v1.StreamCompositeIndicesServiceResponseV1, error)
+	grpc.ClientStream
+}
+
+type streamCompositeIndicesServiceV1SubscribeClient struct {
+	grpc.ClientStream
+}
+
+func (x *streamCompositeIndicesServiceV1SubscribeClient) Recv() (*composite_indices_v1.StreamCompositeIndicesServiceResponseV1, error) {
+	m := new(composite_indices_v1.StreamCompositeIndicesServiceResponseV1)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// StreamCompositeIndicesServiceV1Server is the server API for StreamCompositeIndicesServiceV1 service.
+// All implementations must embed UnimplementedStreamCompositeIndicesServiceV1Server
+// for forward compatibility
+type StreamCompositeIndicesServiceV1Server interface {
+	// Subscribe
+	Subscribe(*composite_indices_v1.StreamCompositeIndicesServiceRequestV1, StreamCompositeIndicesServiceV1_SubscribeServer) error
+	mustEmbedUnimplementedStreamCompositeIndicesServiceV1Server()
+}
+
+// UnimplementedStreamCompositeIndicesServiceV1Server must be embedded to have forward compatible implementations.
+type UnimplementedStreamCompositeIndicesServiceV1Server struct {
+}
+
+func (UnimplementedStreamCompositeIndicesServiceV1Server) Subscribe(*composite_indices_v1.StreamCompositeIndicesServiceRequestV1, StreamCompositeIndicesServiceV1_SubscribeServer) error {
+	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
+}
+func (UnimplementedStreamCompositeIndicesServiceV1Server) mustEmbedUnimplementedStreamCompositeIndicesServiceV1Server() {
+}
+
+// UnsafeStreamCompositeIndicesServiceV1Server may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StreamCompositeIndicesServiceV1Server will
+// result in compilation errors.
+type UnsafeStreamCompositeIndicesServiceV1Server interface {
+	mustEmbedUnimplementedStreamCompositeIndicesServiceV1Server()
+}
+
+func RegisterStreamCompositeIndicesServiceV1Server(s grpc.ServiceRegistrar, srv StreamCompositeIndicesServiceV1Server) {
+	s.RegisterService(&StreamCompositeIndicesServiceV1_ServiceDesc, srv)
+}
+
+func _StreamCompositeIndicesServiceV1_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(composite_indices_v1.StreamCompositeIndicesServiceRequestV1)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StreamCompositeIndicesServiceV1Server).Subscribe(m, &streamCompositeIndicesServiceV1SubscribeServer{stream})
+}
+
+type StreamCompositeIndicesServiceV1_SubscribeServer interface {
+	Send(*composite_indices_v1.StreamCompositeIndicesServiceResponseV1) error
+	grpc.ServerStream
+}
+
+type streamCompositeIndicesServiceV1SubscribeServer struct {
+	grpc.ServerStream
+}
+
+func (x *streamCompositeIndicesServiceV1SubscribeServer) Send(m *composite_indices_v1.StreamCompositeIndicesServiceResponseV1) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// StreamCompositeIndicesServiceV1_ServiceDesc is the grpc.ServiceDesc for StreamCompositeIndicesServiceV1 service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var StreamCompositeIndicesServiceV1_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "kaikosdk.StreamCompositeIndicesServiceV1",
+	HandlerType: (*StreamCompositeIndicesServiceV1Server)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Subscribe",
+			Handler:       _StreamCompositeIndicesServiceV1_Subscribe_Handler,
 			ServerStreams: true,
 		},
 	},
