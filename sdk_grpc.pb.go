@@ -25,6 +25,7 @@ import (
 	iv_svi_parameters_v1 "github.com/kaikodata/kaiko-go-sdk/stream/iv_svi_parameters_v1"
 	market_update_v1 "github.com/kaikodata/kaiko-go-sdk/stream/market_update_v1"
 	orderbookl2_v1 "github.com/kaikodata/kaiko-go-sdk/stream/orderbookl2_v1"
+	staking_rates_v1 "github.com/kaikodata/kaiko-go-sdk/stream/staking_rates_v1"
 	trades_v1 "github.com/kaikodata/kaiko-go-sdk/stream/trades_v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -2311,6 +2312,126 @@ var StreamCompositeIndicesServiceV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "Subscribe",
 			Handler:       _StreamCompositeIndicesServiceV1_Subscribe_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "sdk/sdk.proto",
+}
+
+const (
+	StreamStakingRatesServiceV1_Subscribe_FullMethodName = "/kaikosdk.StreamStakingRatesServiceV1/Subscribe"
+)
+
+// StreamStakingRatesServiceV1Client is the client API for StreamStakingRatesServiceV1 service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type StreamStakingRatesServiceV1Client interface {
+	// Subscribe
+	Subscribe(ctx context.Context, in *staking_rates_v1.StreamStakingRatesServiceRequestV1, opts ...grpc.CallOption) (StreamStakingRatesServiceV1_SubscribeClient, error)
+}
+
+type streamStakingRatesServiceV1Client struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewStreamStakingRatesServiceV1Client(cc grpc.ClientConnInterface) StreamStakingRatesServiceV1Client {
+	return &streamStakingRatesServiceV1Client{cc}
+}
+
+func (c *streamStakingRatesServiceV1Client) Subscribe(ctx context.Context, in *staking_rates_v1.StreamStakingRatesServiceRequestV1, opts ...grpc.CallOption) (StreamStakingRatesServiceV1_SubscribeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &StreamStakingRatesServiceV1_ServiceDesc.Streams[0], StreamStakingRatesServiceV1_Subscribe_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &streamStakingRatesServiceV1SubscribeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type StreamStakingRatesServiceV1_SubscribeClient interface {
+	Recv() (*staking_rates_v1.StreamStakingRatesServiceResponseV1, error)
+	grpc.ClientStream
+}
+
+type streamStakingRatesServiceV1SubscribeClient struct {
+	grpc.ClientStream
+}
+
+func (x *streamStakingRatesServiceV1SubscribeClient) Recv() (*staking_rates_v1.StreamStakingRatesServiceResponseV1, error) {
+	m := new(staking_rates_v1.StreamStakingRatesServiceResponseV1)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// StreamStakingRatesServiceV1Server is the server API for StreamStakingRatesServiceV1 service.
+// All implementations must embed UnimplementedStreamStakingRatesServiceV1Server
+// for forward compatibility
+type StreamStakingRatesServiceV1Server interface {
+	// Subscribe
+	Subscribe(*staking_rates_v1.StreamStakingRatesServiceRequestV1, StreamStakingRatesServiceV1_SubscribeServer) error
+	mustEmbedUnimplementedStreamStakingRatesServiceV1Server()
+}
+
+// UnimplementedStreamStakingRatesServiceV1Server must be embedded to have forward compatible implementations.
+type UnimplementedStreamStakingRatesServiceV1Server struct {
+}
+
+func (UnimplementedStreamStakingRatesServiceV1Server) Subscribe(*staking_rates_v1.StreamStakingRatesServiceRequestV1, StreamStakingRatesServiceV1_SubscribeServer) error {
+	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
+}
+func (UnimplementedStreamStakingRatesServiceV1Server) mustEmbedUnimplementedStreamStakingRatesServiceV1Server() {
+}
+
+// UnsafeStreamStakingRatesServiceV1Server may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StreamStakingRatesServiceV1Server will
+// result in compilation errors.
+type UnsafeStreamStakingRatesServiceV1Server interface {
+	mustEmbedUnimplementedStreamStakingRatesServiceV1Server()
+}
+
+func RegisterStreamStakingRatesServiceV1Server(s grpc.ServiceRegistrar, srv StreamStakingRatesServiceV1Server) {
+	s.RegisterService(&StreamStakingRatesServiceV1_ServiceDesc, srv)
+}
+
+func _StreamStakingRatesServiceV1_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(staking_rates_v1.StreamStakingRatesServiceRequestV1)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StreamStakingRatesServiceV1Server).Subscribe(m, &streamStakingRatesServiceV1SubscribeServer{stream})
+}
+
+type StreamStakingRatesServiceV1_SubscribeServer interface {
+	Send(*staking_rates_v1.StreamStakingRatesServiceResponseV1) error
+	grpc.ServerStream
+}
+
+type streamStakingRatesServiceV1SubscribeServer struct {
+	grpc.ServerStream
+}
+
+func (x *streamStakingRatesServiceV1SubscribeServer) Send(m *staking_rates_v1.StreamStakingRatesServiceResponseV1) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// StreamStakingRatesServiceV1_ServiceDesc is the grpc.ServiceDesc for StreamStakingRatesServiceV1 service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var StreamStakingRatesServiceV1_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "kaikosdk.StreamStakingRatesServiceV1",
+	HandlerType: (*StreamStakingRatesServiceV1Server)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Subscribe",
+			Handler:       _StreamStakingRatesServiceV1_Subscribe_Handler,
 			ServerStreams: true,
 		},
 	},
