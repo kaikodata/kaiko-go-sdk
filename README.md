@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://www.kaiko.com/assets/sites/1/2025/10/kaiko-logo-rgb_color.svg" alt="Kaiko" width="300">
+  <img src="logo.png" alt="Kaiko" width="300">
 </p>
 
 # kaiko-go-sdk
