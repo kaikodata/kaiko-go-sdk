@@ -15,9 +15,12 @@ import (
 	aggregates_ohlcv_v1 "github.com/kaikodata/kaiko-go-sdk/stream/aggregates_ohlcv_v1"
 	aggregates_spot_exchange_rate_v2 "github.com/kaikodata/kaiko-go-sdk/stream/aggregates_spot_exchange_rate_v2"
 	aggregates_vwap_v1 "github.com/kaikodata/kaiko-go-sdk/stream/aggregates_vwap_v1"
+	canton_oracle_v1 "github.com/kaikodata/kaiko-go-sdk/stream/canton_oracle_v1"
+	canton_oracle_v2 "github.com/kaikodata/kaiko-go-sdk/stream/canton_oracle_v2"
 	composite_indices_v1 "github.com/kaikodata/kaiko-go-sdk/stream/composite_indices_v1"
 	constant_duration_indices_v1 "github.com/kaikodata/kaiko-go-sdk/stream/constant_duration_indices_v1"
 	derivatives_instrument_metrics_v1 "github.com/kaikodata/kaiko-go-sdk/stream/derivatives_instrument_metrics_v1"
+	evm_oracle_v1 "github.com/kaikodata/kaiko-go-sdk/stream/evm_oracle_v1"
 	exotic_indices_v1 "github.com/kaikodata/kaiko-go-sdk/stream/exotic_indices_v1"
 	index_forex_rate_v1 "github.com/kaikodata/kaiko-go-sdk/stream/index_forex_rate_v1"
 	index_multi_assets_v1 "github.com/kaikodata/kaiko-go-sdk/stream/index_multi_assets_v1"
@@ -2432,6 +2435,366 @@ var StreamStakingRatesServiceV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "Subscribe",
 			Handler:       _StreamStakingRatesServiceV1_Subscribe_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "sdk/sdk.proto",
+}
+
+const (
+	StreamCantonOracleServiceV1_Subscribe_FullMethodName = "/kaikosdk.StreamCantonOracleServiceV1/Subscribe"
+)
+
+// StreamCantonOracleServiceV1Client is the client API for StreamCantonOracleServiceV1 service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type StreamCantonOracleServiceV1Client interface {
+	// Subscribe
+	Subscribe(ctx context.Context, in *canton_oracle_v1.StreamCantonOracleServiceRequestV1, opts ...grpc.CallOption) (StreamCantonOracleServiceV1_SubscribeClient, error)
+}
+
+type streamCantonOracleServiceV1Client struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewStreamCantonOracleServiceV1Client(cc grpc.ClientConnInterface) StreamCantonOracleServiceV1Client {
+	return &streamCantonOracleServiceV1Client{cc}
+}
+
+func (c *streamCantonOracleServiceV1Client) Subscribe(ctx context.Context, in *canton_oracle_v1.StreamCantonOracleServiceRequestV1, opts ...grpc.CallOption) (StreamCantonOracleServiceV1_SubscribeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &StreamCantonOracleServiceV1_ServiceDesc.Streams[0], StreamCantonOracleServiceV1_Subscribe_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &streamCantonOracleServiceV1SubscribeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type StreamCantonOracleServiceV1_SubscribeClient interface {
+	Recv() (*canton_oracle_v1.StreamCantonOracleServiceResponseV1, error)
+	grpc.ClientStream
+}
+
+type streamCantonOracleServiceV1SubscribeClient struct {
+	grpc.ClientStream
+}
+
+func (x *streamCantonOracleServiceV1SubscribeClient) Recv() (*canton_oracle_v1.StreamCantonOracleServiceResponseV1, error) {
+	m := new(canton_oracle_v1.StreamCantonOracleServiceResponseV1)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// StreamCantonOracleServiceV1Server is the server API for StreamCantonOracleServiceV1 service.
+// All implementations must embed UnimplementedStreamCantonOracleServiceV1Server
+// for forward compatibility
+type StreamCantonOracleServiceV1Server interface {
+	// Subscribe
+	Subscribe(*canton_oracle_v1.StreamCantonOracleServiceRequestV1, StreamCantonOracleServiceV1_SubscribeServer) error
+	mustEmbedUnimplementedStreamCantonOracleServiceV1Server()
+}
+
+// UnimplementedStreamCantonOracleServiceV1Server must be embedded to have forward compatible implementations.
+type UnimplementedStreamCantonOracleServiceV1Server struct {
+}
+
+func (UnimplementedStreamCantonOracleServiceV1Server) Subscribe(*canton_oracle_v1.StreamCantonOracleServiceRequestV1, StreamCantonOracleServiceV1_SubscribeServer) error {
+	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
+}
+func (UnimplementedStreamCantonOracleServiceV1Server) mustEmbedUnimplementedStreamCantonOracleServiceV1Server() {
+}
+
+// UnsafeStreamCantonOracleServiceV1Server may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StreamCantonOracleServiceV1Server will
+// result in compilation errors.
+type UnsafeStreamCantonOracleServiceV1Server interface {
+	mustEmbedUnimplementedStreamCantonOracleServiceV1Server()
+}
+
+func RegisterStreamCantonOracleServiceV1Server(s grpc.ServiceRegistrar, srv StreamCantonOracleServiceV1Server) {
+	s.RegisterService(&StreamCantonOracleServiceV1_ServiceDesc, srv)
+}
+
+func _StreamCantonOracleServiceV1_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(canton_oracle_v1.StreamCantonOracleServiceRequestV1)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StreamCantonOracleServiceV1Server).Subscribe(m, &streamCantonOracleServiceV1SubscribeServer{stream})
+}
+
+type StreamCantonOracleServiceV1_SubscribeServer interface {
+	Send(*canton_oracle_v1.StreamCantonOracleServiceResponseV1) error
+	grpc.ServerStream
+}
+
+type streamCantonOracleServiceV1SubscribeServer struct {
+	grpc.ServerStream
+}
+
+func (x *streamCantonOracleServiceV1SubscribeServer) Send(m *canton_oracle_v1.StreamCantonOracleServiceResponseV1) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// StreamCantonOracleServiceV1_ServiceDesc is the grpc.ServiceDesc for StreamCantonOracleServiceV1 service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var StreamCantonOracleServiceV1_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "kaikosdk.StreamCantonOracleServiceV1",
+	HandlerType: (*StreamCantonOracleServiceV1Server)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Subscribe",
+			Handler:       _StreamCantonOracleServiceV1_Subscribe_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "sdk/sdk.proto",
+}
+
+const (
+	StreamCantonOracleServiceV2_Subscribe_FullMethodName = "/kaikosdk.StreamCantonOracleServiceV2/Subscribe"
+)
+
+// StreamCantonOracleServiceV2Client is the client API for StreamCantonOracleServiceV2 service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type StreamCantonOracleServiceV2Client interface {
+	// Subscribe
+	Subscribe(ctx context.Context, in *canton_oracle_v2.StreamCantonOracleServiceRequestV2, opts ...grpc.CallOption) (StreamCantonOracleServiceV2_SubscribeClient, error)
+}
+
+type streamCantonOracleServiceV2Client struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewStreamCantonOracleServiceV2Client(cc grpc.ClientConnInterface) StreamCantonOracleServiceV2Client {
+	return &streamCantonOracleServiceV2Client{cc}
+}
+
+func (c *streamCantonOracleServiceV2Client) Subscribe(ctx context.Context, in *canton_oracle_v2.StreamCantonOracleServiceRequestV2, opts ...grpc.CallOption) (StreamCantonOracleServiceV2_SubscribeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &StreamCantonOracleServiceV2_ServiceDesc.Streams[0], StreamCantonOracleServiceV2_Subscribe_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &streamCantonOracleServiceV2SubscribeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type StreamCantonOracleServiceV2_SubscribeClient interface {
+	Recv() (*canton_oracle_v2.StreamCantonOracleServiceResponseV2, error)
+	grpc.ClientStream
+}
+
+type streamCantonOracleServiceV2SubscribeClient struct {
+	grpc.ClientStream
+}
+
+func (x *streamCantonOracleServiceV2SubscribeClient) Recv() (*canton_oracle_v2.StreamCantonOracleServiceResponseV2, error) {
+	m := new(canton_oracle_v2.StreamCantonOracleServiceResponseV2)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// StreamCantonOracleServiceV2Server is the server API for StreamCantonOracleServiceV2 service.
+// All implementations must embed UnimplementedStreamCantonOracleServiceV2Server
+// for forward compatibility
+type StreamCantonOracleServiceV2Server interface {
+	// Subscribe
+	Subscribe(*canton_oracle_v2.StreamCantonOracleServiceRequestV2, StreamCantonOracleServiceV2_SubscribeServer) error
+	mustEmbedUnimplementedStreamCantonOracleServiceV2Server()
+}
+
+// UnimplementedStreamCantonOracleServiceV2Server must be embedded to have forward compatible implementations.
+type UnimplementedStreamCantonOracleServiceV2Server struct {
+}
+
+func (UnimplementedStreamCantonOracleServiceV2Server) Subscribe(*canton_oracle_v2.StreamCantonOracleServiceRequestV2, StreamCantonOracleServiceV2_SubscribeServer) error {
+	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
+}
+func (UnimplementedStreamCantonOracleServiceV2Server) mustEmbedUnimplementedStreamCantonOracleServiceV2Server() {
+}
+
+// UnsafeStreamCantonOracleServiceV2Server may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StreamCantonOracleServiceV2Server will
+// result in compilation errors.
+type UnsafeStreamCantonOracleServiceV2Server interface {
+	mustEmbedUnimplementedStreamCantonOracleServiceV2Server()
+}
+
+func RegisterStreamCantonOracleServiceV2Server(s grpc.ServiceRegistrar, srv StreamCantonOracleServiceV2Server) {
+	s.RegisterService(&StreamCantonOracleServiceV2_ServiceDesc, srv)
+}
+
+func _StreamCantonOracleServiceV2_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(canton_oracle_v2.StreamCantonOracleServiceRequestV2)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StreamCantonOracleServiceV2Server).Subscribe(m, &streamCantonOracleServiceV2SubscribeServer{stream})
+}
+
+type StreamCantonOracleServiceV2_SubscribeServer interface {
+	Send(*canton_oracle_v2.StreamCantonOracleServiceResponseV2) error
+	grpc.ServerStream
+}
+
+type streamCantonOracleServiceV2SubscribeServer struct {
+	grpc.ServerStream
+}
+
+func (x *streamCantonOracleServiceV2SubscribeServer) Send(m *canton_oracle_v2.StreamCantonOracleServiceResponseV2) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// StreamCantonOracleServiceV2_ServiceDesc is the grpc.ServiceDesc for StreamCantonOracleServiceV2 service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var StreamCantonOracleServiceV2_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "kaikosdk.StreamCantonOracleServiceV2",
+	HandlerType: (*StreamCantonOracleServiceV2Server)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Subscribe",
+			Handler:       _StreamCantonOracleServiceV2_Subscribe_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "sdk/sdk.proto",
+}
+
+const (
+	StreamEvmOracleServiceV1_Subscribe_FullMethodName = "/kaikosdk.StreamEvmOracleServiceV1/Subscribe"
+)
+
+// StreamEvmOracleServiceV1Client is the client API for StreamEvmOracleServiceV1 service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type StreamEvmOracleServiceV1Client interface {
+	// Subscribe
+	Subscribe(ctx context.Context, in *evm_oracle_v1.StreamEvmOracleServiceRequestV1, opts ...grpc.CallOption) (StreamEvmOracleServiceV1_SubscribeClient, error)
+}
+
+type streamEvmOracleServiceV1Client struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewStreamEvmOracleServiceV1Client(cc grpc.ClientConnInterface) StreamEvmOracleServiceV1Client {
+	return &streamEvmOracleServiceV1Client{cc}
+}
+
+func (c *streamEvmOracleServiceV1Client) Subscribe(ctx context.Context, in *evm_oracle_v1.StreamEvmOracleServiceRequestV1, opts ...grpc.CallOption) (StreamEvmOracleServiceV1_SubscribeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &StreamEvmOracleServiceV1_ServiceDesc.Streams[0], StreamEvmOracleServiceV1_Subscribe_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &streamEvmOracleServiceV1SubscribeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type StreamEvmOracleServiceV1_SubscribeClient interface {
+	Recv() (*evm_oracle_v1.StreamEvmOracleServiceResponseV1, error)
+	grpc.ClientStream
+}
+
+type streamEvmOracleServiceV1SubscribeClient struct {
+	grpc.ClientStream
+}
+
+func (x *streamEvmOracleServiceV1SubscribeClient) Recv() (*evm_oracle_v1.StreamEvmOracleServiceResponseV1, error) {
+	m := new(evm_oracle_v1.StreamEvmOracleServiceResponseV1)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// StreamEvmOracleServiceV1Server is the server API for StreamEvmOracleServiceV1 service.
+// All implementations must embed UnimplementedStreamEvmOracleServiceV1Server
+// for forward compatibility
+type StreamEvmOracleServiceV1Server interface {
+	// Subscribe
+	Subscribe(*evm_oracle_v1.StreamEvmOracleServiceRequestV1, StreamEvmOracleServiceV1_SubscribeServer) error
+	mustEmbedUnimplementedStreamEvmOracleServiceV1Server()
+}
+
+// UnimplementedStreamEvmOracleServiceV1Server must be embedded to have forward compatible implementations.
+type UnimplementedStreamEvmOracleServiceV1Server struct {
+}
+
+func (UnimplementedStreamEvmOracleServiceV1Server) Subscribe(*evm_oracle_v1.StreamEvmOracleServiceRequestV1, StreamEvmOracleServiceV1_SubscribeServer) error {
+	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
+}
+func (UnimplementedStreamEvmOracleServiceV1Server) mustEmbedUnimplementedStreamEvmOracleServiceV1Server() {
+}
+
+// UnsafeStreamEvmOracleServiceV1Server may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StreamEvmOracleServiceV1Server will
+// result in compilation errors.
+type UnsafeStreamEvmOracleServiceV1Server interface {
+	mustEmbedUnimplementedStreamEvmOracleServiceV1Server()
+}
+
+func RegisterStreamEvmOracleServiceV1Server(s grpc.ServiceRegistrar, srv StreamEvmOracleServiceV1Server) {
+	s.RegisterService(&StreamEvmOracleServiceV1_ServiceDesc, srv)
+}
+
+func _StreamEvmOracleServiceV1_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(evm_oracle_v1.StreamEvmOracleServiceRequestV1)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StreamEvmOracleServiceV1Server).Subscribe(m, &streamEvmOracleServiceV1SubscribeServer{stream})
+}
+
+type StreamEvmOracleServiceV1_SubscribeServer interface {
+	Send(*evm_oracle_v1.StreamEvmOracleServiceResponseV1) error
+	grpc.ServerStream
+}
+
+type streamEvmOracleServiceV1SubscribeServer struct {
+	grpc.ServerStream
+}
+
+func (x *streamEvmOracleServiceV1SubscribeServer) Send(m *evm_oracle_v1.StreamEvmOracleServiceResponseV1) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// StreamEvmOracleServiceV1_ServiceDesc is the grpc.ServiceDesc for StreamEvmOracleServiceV1 service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var StreamEvmOracleServiceV1_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "kaikosdk.StreamEvmOracleServiceV1",
+	HandlerType: (*StreamEvmOracleServiceV1Server)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Subscribe",
+			Handler:       _StreamEvmOracleServiceV1_Subscribe_Handler,
 			ServerStreams: true,
 		},
 	},
