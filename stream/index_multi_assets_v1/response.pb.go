@@ -289,7 +289,17 @@ type StreamIndexMultiAssetsServiceResponseV1 struct {
 	// Event generation timestamp (event created by Kaiko), after normalization.
 	TsEvent *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=ts_event,json=tsEvent,proto3" json:"ts_event,omitempty"`
 	// Timestamp of computation (differs from ts_event only if a buffer is applied, especially for real time data).
-	TsCompute     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=ts_compute,json=tsCompute,proto3" json:"ts_compute,omitempty"`
+	TsCompute *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=ts_compute,json=tsCompute,proto3" json:"ts_compute,omitempty"`
+	// True when this publication is a restatement correcting a previously
+	// published value.
+	RestatementStatus *bool `protobuf:"varint,9,opt,name=restatement_status,json=restatementStatus,proto3,oneof" json:"restatement_status,omitempty"`
+	// Identifier of the correction that produced this value: one per index code per
+	// determination tick. Set only on restated publications.
+	CorrectionId *string `protobuf:"bytes,10,opt,name=correction_id,json=correctionId,proto3,oneof" json:"correction_id,omitempty"`
+	// Publication time of the original, incorrect value being corrected.
+	InitialPublicationTs *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=initial_publication_ts,json=initialPublicationTs,proto3,oneof" json:"initial_publication_ts,omitempty"`
+	// Identifier of the incident that triggered the restatement.
+	IncidentId    *string `protobuf:"bytes,12,opt,name=incident_id,json=incidentId,proto3,oneof" json:"incident_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -380,6 +390,34 @@ func (x *StreamIndexMultiAssetsServiceResponseV1) GetTsCompute() *timestamppb.Ti
 	return nil
 }
 
+func (x *StreamIndexMultiAssetsServiceResponseV1) GetRestatementStatus() bool {
+	if x != nil && x.RestatementStatus != nil {
+		return *x.RestatementStatus
+	}
+	return false
+}
+
+func (x *StreamIndexMultiAssetsServiceResponseV1) GetCorrectionId() string {
+	if x != nil && x.CorrectionId != nil {
+		return *x.CorrectionId
+	}
+	return ""
+}
+
+func (x *StreamIndexMultiAssetsServiceResponseV1) GetInitialPublicationTs() *timestamppb.Timestamp {
+	if x != nil {
+		return x.InitialPublicationTs
+	}
+	return nil
+}
+
+func (x *StreamIndexMultiAssetsServiceResponseV1) GetIncidentId() string {
+	if x != nil && x.IncidentId != nil {
+		return *x.IncidentId
+	}
+	return ""
+}
+
 var File_sdk_stream_index_multi_assets_v1_response_proto protoreflect.FileDescriptor
 
 const file_sdk_stream_index_multi_assets_v1_response_proto_rawDesc = "" +
@@ -403,7 +441,7 @@ const file_sdk_stream_index_multi_assets_v1_response_proto_rawDesc = "" +
 	"\vindex_value\x18\x01 \x01(\x01R\n" +
 	"indexValue\x12\x18\n" +
 	"\adivisor\x18\x02 \x01(\x01R\adivisor\x12I\n" +
-	"\x05pairs\x18\x03 \x03(\v23.kaikosdk.StreamIndexMultiAssetsServiceResponsePairR\x05pairs\"\xf8\x03\n" +
+	"\x05pairs\x18\x03 \x03(\v23.kaikosdk.StreamIndexMultiAssetsServiceResponsePairR\x05pairs\"\xa7\x06\n" +
 	"'StreamIndexMultiAssetsServiceResponseV1\x12<\n" +
 	"\tcommodity\x18\x01 \x01(\x0e2\x1e.kaikosdk.StreamIndexCommodityR\tcommodity\x12\x1d\n" +
 	"\n" +
@@ -415,7 +453,17 @@ const file_sdk_stream_index_multi_assets_v1_response_proto_rawDesc = "" +
 	"\x05price\x18\x06 \x01(\v25.kaikosdk.StreamIndexMultiAssetsServiceResponsePricesR\x05price\x125\n" +
 	"\bts_event\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\atsEvent\x129\n" +
 	"\n" +
-	"ts_compute\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\ttsComputeB\xa9\x01\n" +
+	"ts_compute\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\ttsCompute\x122\n" +
+	"\x12restatement_status\x18\t \x01(\bH\x00R\x11restatementStatus\x88\x01\x01\x12(\n" +
+	"\rcorrection_id\x18\n" +
+	" \x01(\tH\x01R\fcorrectionId\x88\x01\x01\x12U\n" +
+	"\x16initial_publication_ts\x18\v \x01(\v2\x1a.google.protobuf.TimestampH\x02R\x14initialPublicationTs\x88\x01\x01\x12$\n" +
+	"\vincident_id\x18\f \x01(\tH\x03R\n" +
+	"incidentId\x88\x01\x01B\x15\n" +
+	"\x13_restatement_statusB\x10\n" +
+	"\x0e_correction_idB\x19\n" +
+	"\x17_initial_publication_tsB\x0e\n" +
+	"\f_incident_idB\xa9\x01\n" +
 	"*com.kaiko.sdk.stream.index_multi_assets_v1P\x01ZTgithub.com/kaikodata/kaiko-go-sdk/stream/index_multi_assets_v1;index_multi_assets_v1\xaa\x02\"KaikoSdk.Stream.IndexMultiAssetsV1b\x06proto3"
 
 var (
@@ -452,11 +500,12 @@ var file_sdk_stream_index_multi_assets_v1_response_proto_depIdxs = []int32{
 	2,  // 7: kaikosdk.StreamIndexMultiAssetsServiceResponseV1.price:type_name -> kaikosdk.StreamIndexMultiAssetsServiceResponsePrices
 	5,  // 8: kaikosdk.StreamIndexMultiAssetsServiceResponseV1.ts_event:type_name -> google.protobuf.Timestamp
 	5,  // 9: kaikosdk.StreamIndexMultiAssetsServiceResponseV1.ts_compute:type_name -> google.protobuf.Timestamp
-	10, // [10:10] is the sub-list for method output_type
-	10, // [10:10] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	5,  // 10: kaikosdk.StreamIndexMultiAssetsServiceResponseV1.initial_publication_ts:type_name -> google.protobuf.Timestamp
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_sdk_stream_index_multi_assets_v1_response_proto_init() }
@@ -464,6 +513,7 @@ func file_sdk_stream_index_multi_assets_v1_response_proto_init() {
 	if File_sdk_stream_index_multi_assets_v1_response_proto != nil {
 		return
 	}
+	file_sdk_stream_index_multi_assets_v1_response_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
